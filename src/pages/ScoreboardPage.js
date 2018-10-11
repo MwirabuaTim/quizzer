@@ -50,6 +50,7 @@ class ScoreboardPage extends React.Component {
         { this.props.pastScores.length !== 0 ?
           <ListView
             dataSource={this.state.dataSource}
+            enableEmptySections={true}
             renderRow={(data) => this.renderRow(data)}
           />
         :

@@ -17,12 +17,11 @@ class TriviaComponent extends React.Component {
     super(props);
     this.state = {
       currentQuestionIndex: 0,
-      triviaEnded: false,
       answeredState: false, // in this state the correct question is highlighted
     }
     this.createAnswersArray = this.createAnswersArray.bind(this);
-    this.nextQuestionOrFinish = this.nextQuestionOrFinish.bind(this);
-    this.changeToAnsweredStateAndAddScore = this.changeToAnsweredStateAndAddScore.bind(this);
+    this.finishQuiz = this.finishQuiz.bind(this);
+    this.answerQuestion = this.answerQuestion.bind(this);
   }
   componentWillMount(){
     // you should use this to store things that do NOT trigger a rerender
@@ -31,26 +30,31 @@ class TriviaComponent extends React.Component {
   }
   componentWillUpdate(nextProps, nextState){
     if(this.state.currentQuestionIndex !== nextState.currentQuestionIndex){
-      this.answers = this.createAnswersArray(this.props.triviaQuestions[nextState.currentQuestionIndex]);
-    }
-    if(this.state.triviaEnded === false && nextState.triviaEnded === true){
-      this.props.actions.writeToStore(this.props.playerScore, this.props.difficulty, this.props.triviaQuestions.length)
+      let nextQuestion = this.props.triviaQuestions[nextState.currentQuestionIndex]
+      if(nextQuestion){
+        this.answers = this.createAnswersArray(nextQuestion);
+      }
+      else {
+        this.props.actions.endTrivia(this.props.playerScore, this.props.difficulty, this.props.triviaQuestions.length)
+      }
     }
   }
-  createAnswersArray(currentQuestion){
-    const correctAnswer = currentQuestion.correct_answer;
-    const incorrectAnswers = currentQuestion.incorrect_answers;
+  createAnswersArray(question){
+    const correctAnswer = question.correct_answer;
+    const incorrectAnswers = question.incorrect_answers;
 
     // structure
     // correct_answer: ''
     // incorrect_answers: [{0: '', 1: '', 2: ''}]
     // do not mutate the other arrays
     const answerArray = [...incorrectAnswers, correctAnswer].map((answer, i) => {
+      answer = { answerText: answer, selected: false }
       if(i === 3){
-        return { answerText: answer, isCorrect: true}
+        answer.isCorrect = true
       } else {
-        return { answerText: answer, isCorrect: false}
+        answer.isCorrect = false
       }
+      return answer
     });
 
     //shuffle
@@ -58,45 +62,42 @@ class TriviaComponent extends React.Component {
 
     return answerArray;
   }
-  changeToAnsweredStateAndAddScore(isCorrect){
-    this.decideIfScoreIsAdded(isCorrect)
-    this.setState({answeredState: true})
-  }
-  nextQuestionOrFinish(){
-    const currentQuestionIndex = this.state.currentQuestionIndex;
-    // check if last question, if so finish screen
-    if(currentQuestionIndex === this.props.triviaQuestions.length -1){
-      this.setState({ triviaEnded: true, answeredState: false })
-    } else {
-      const nextQuestionIndex = this.state.currentQuestionIndex + 1;
-      this.setState({ currentQuestionIndex: nextQuestionIndex, answeredState: false})
-    }
-  }
-  decideIfScoreIsAdded(isCorrect){
-    if(isCorrect){
+  answerQuestion(answer){
+    answer.selected = true
+    if(answer.isCorrect){
       this.props.actions.addToScore()
     }
+    this.setState({answeredState: true})
+    setTimeout(() => {
+      this.nextQuestion()
+    }, 100)
+  }
+  finishQuiz(){
+    this.props.actions.endTrivia(this.props.playerScore, this.props.difficulty, this.state.currentQuestionIndex + 1)
+  }
+  nextQuestion(){
+    const nextQuestionIndex = this.state.currentQuestionIndex + 1;
+    this.setState({ currentQuestionIndex: nextQuestionIndex, answeredState: false})
   }
   render(){
     const currentQuestion = this.props.triviaQuestions[this.state.currentQuestionIndex];
-
     return (
       <View>
-        { this.state.triviaEnded ?
-          <TriviaFinishedComponent
-            playerScore={this.props.playerScore}
-            numberOfTriviaQuestions={this.props.triviaQuestions.length}
-            handleOnPress={this.props.actions.restartTrivia}
-          />
-        :
+        { (currentQuestion && !this.props.triviaEnded) ?
           <TriviaInProgressComponent
             currentQuestion={currentQuestion}
             lastQuestion={this.state.currentQuestionIndex === this.props.triviaQuestions.length-1}
             questionProgress={`${this.state.currentQuestionIndex + 1} / ${this.props.triviaQuestions.length}`}
             answers={this.answers}
             answeredState={this.state.answeredState}
-            onNextQuestion={this.nextQuestionOrFinish}
-            onChangeAnswerStateAndScore={this.changeToAnsweredStateAndAddScore}
+            finishQuiz={this.finishQuiz}
+            answerQuestion={this.answerQuestion}
+          />
+        :
+          <TriviaFinishedComponent
+            playerScore={this.props.playerScore}
+            numberOfAnsweredQuestions={this.state.currentQuestionIndex}
+            handleOnPress={this.props.actions.restartTrivia}
           />
         }
       </View>
@@ -108,7 +109,8 @@ TriviaComponent.propTypes = {
   triviaQuestions: PropTypes.arrayOf(PropTypes.object).isRequired,
   actions: PropTypes.object.isRequired,
   playerScore: PropTypes.number.isRequired,
-  difficulty: PropTypes.string.isRequired
+  difficulty: PropTypes.string.isRequired,
+  triviaEnded: PropTypes.bool.isRequired
 }
 
 export default TriviaComponent;

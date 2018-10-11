@@ -1,5 +1,5 @@
 import { NavigationActions } from 'react-navigation';
-import { AppNavigator } from '../pages/App';
+import { AppNavigator } from '../pages/AppPage';
 
 export default function navigationReducer(state, action) {
   let nextState;

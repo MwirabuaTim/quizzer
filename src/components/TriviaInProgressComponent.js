@@ -2,7 +2,23 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, Button, TouchableOpacity, StyleSheet } from 'react-native';
 
-const TriviaInProgressComponent = ({ currentQuestion, lastQuestion, questionProgress, answers, answeredState, onNextQuestion, onChangeAnswerStateAndScore }) => (
+const buttonStyle = (answeredState, answer) => {
+  if(answeredState){
+    let style = [styles.tile]
+    if(answer.isCorrect){
+      style.push(styles.correctAnswerTile)
+    }
+    else{
+      style.push(styles.answerTile)
+    }
+    if (answer.selected){
+      style.push(styles.selectedTile)
+    }
+    return style
+  }
+  return [styles.answerTile, styles.tile]
+}
+const TriviaInProgressComponent = ({ currentQuestion, lastQuestion, questionProgress, answers, answeredState, finishQuiz, answerQuestion }) => (
   <View>
     <View style={[styles.headerTile, styles.tile]}>
       <Text>Question: {questionProgress}</Text>
@@ -17,20 +33,22 @@ const TriviaInProgressComponent = ({ currentQuestion, lastQuestion, questionProg
           <TouchableOpacity
             key={answer.answerText}
             disabled={answeredState}
-            onPress={() => !answeredState && onChangeAnswerStateAndScore(answer.isCorrect)}
-            style={answeredState && answer.isCorrect ? [styles.correctAnswerTile, styles.tile] : [styles.answerTile, styles.tile]}
+            onPress={() => !answeredState && answerQuestion(answer)}
+            style={buttonStyle(answeredState, answer)}
             activeOpacity={0.5}
           >
             <Text>{answer.answerText}</Text>
           </TouchableOpacity>
         )
       })}
-      {answeredState &&
-      <Button
-        onPress={() => onNextQuestion()}
-        title={lastQuestion ? "Results" : "Next Question"}
-        color="#841584"
-      />}
+      
+      <View style={styles.finishQuiz}>
+        <Button
+          onPress={() => finishQuiz()}
+          title={(lastQuestion && answeredState) ? "See Your Results" : 'Quit Quiz' }
+          color={(lastQuestion && answeredState) ? "#841584" : '#ccc' }
+        />
+      </View>
     </View>
   </View>
 );
@@ -42,10 +60,12 @@ const styles = StyleSheet.create({
     borderColor: '#000033',
     borderWidth: 1,
   },
+  selectedTile: {
+    borderColor: 'red',
+  },
   correctAnswerTile: {
     height: 50,
     backgroundColor: '#85d826',
-    borderColor: 'red',
     borderWidth: 1,
   },
   questionArea: {
@@ -64,6 +84,10 @@ const styles = StyleSheet.create({
     margin: 5,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  finishQuiz: {
+    marginHorizontal: 5,
+    marginVertical: 10,
   }
 });
 
@@ -73,8 +97,8 @@ TriviaInProgressComponent.propTypes = {
   questionProgress: PropTypes.string.isRequired,
   answers: PropTypes.arrayOf(PropTypes.object).isRequired,
   answeredState: PropTypes.bool.isRequired,
-  onNextQuestion: PropTypes.func.isRequired,
-  onChangeAnswerStateAndScore: PropTypes.func.isRequired,
+  finishQuiz: PropTypes.func.isRequired,
+  answerQuestion: PropTypes.func.isRequired,
 }
 
 export default TriviaInProgressComponent;

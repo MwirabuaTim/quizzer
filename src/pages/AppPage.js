@@ -2,15 +2,15 @@ import React from 'react';
 import { View } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { addNavigationHelpers, TabNavigator } from 'react-navigation';
+
 // components
 import AppHeader from '../components/AppHeader';
 import TriviaContainer from '../containers/TriviaContainer';
 import ScoreboardContainer from '../containers/ScoreboardContainer';
 
-// const getCurrentRoute = () => {
-//
-// }
+// navigation
+import { TabNavigator, addNavigationHelpers } from 'react-navigation';
+
 export const AppNavigator = TabNavigator(
   {
     TriviaScreen: { screen: TriviaContainer },
@@ -29,7 +29,7 @@ export const AppNavigator = TabNavigator(
   }
 });
 
-const App = ({ dispatch, nav }) => (
+const AppPage = ({ dispatch, nav }) => (
   <View style={{flex: 1}}>
     <AppHeader />
     <AppNavigator
@@ -41,16 +41,14 @@ const App = ({ dispatch, nav }) => (
   </View>
 )
 
-App.propTypes = {
+AppPage.propTypes = {
   dispatch: PropTypes.func.isRequired,
   nav: PropTypes.object.isRequired,
 };
 
-// export default App;
-// //
 const mapStateToProps = (state) => ({
   nav: state.nav
 });
 
 
-export default connect(mapStateToProps)(App);
+export default connect(mapStateToProps)(AppPage);

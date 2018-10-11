@@ -6,7 +6,7 @@ import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import TriviaComponent from '../components/TriviaComponent';
 import TriviaSelectionComponent from '../components/TriviaSelectionComponent';
 
-const TriviaPage = ({ loadingQuestions, triviaState, triviaQuestions, actions, playerScore, difficulty, numberOfQuestions, difficultyLevels }) => (
+const TriviaPage = ({ loadingQuestions, triviaState, triviaQuestions, actions, playerScore, difficulty, triviaEnded, numberOfQuestions, difficultyLevels }) => (
   <View style={styles.triviaContainer}>
     { loadingQuestions ?
       <View style={styles.loader}>
@@ -18,6 +18,7 @@ const TriviaPage = ({ loadingQuestions, triviaState, triviaQuestions, actions, p
           actions={actions}
           playerScore={playerScore}
           difficulty={difficulty}
+          triviaEnded={triviaEnded}
         />
       :
         <TriviaSelectionComponent
@@ -48,6 +49,7 @@ TriviaPage.propTypes = {
   difficultyLevels: PropTypes.arrayOf(PropTypes.string).isRequired,
   loadingQuestions: PropTypes.bool.isRequired,
   triviaState: PropTypes.bool.isRequired,
+  triviaEnded: PropTypes.bool.isRequired,
   triviaQuestions: PropTypes.arrayOf(PropTypes.object).isRequired,
   playerScore: PropTypes.number.isRequired,
 }

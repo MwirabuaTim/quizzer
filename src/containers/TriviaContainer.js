@@ -34,6 +34,7 @@ class TriviaContainer extends React.Component {
         difficultyLevels={this.props.difficultyLevels}
         loadingQuestions={this.props.loadingQuestions}
         triviaState={this.props.triviaState}
+        triviaEnded={this.props.triviaEnded}
         triviaQuestions={this.props.triviaQuestions}
         playerScore={this.props.playerScore}
       />
@@ -48,6 +49,7 @@ TriviaContainer.propTypes = {
   difficultyLevels: PropTypes.arrayOf(PropTypes.string).isRequired,
   loadingQuestions: PropTypes.bool.isRequired,
   triviaState: PropTypes.bool.isRequired,
+  triviaEnded: PropTypes.bool.isRequired,
   triviaQuestions: PropTypes.arrayOf(PropTypes.object).isRequired,
   playerScore: PropTypes.number.isRequired,
 }
@@ -58,6 +60,7 @@ const mapStateToProps = (state) => ({
   difficultyLevels: state.trivia.difficultyLevels,
   loadingQuestions: state.trivia.loadingQuestions,
   triviaState: state.trivia.triviaState,
+  triviaEnded: state.trivia.triviaEnded,
   triviaQuestions: state.trivia.triviaQuestions,
   playerScore: state.trivia.playerScore,
   fetchFailed: state.trivia.fetchFailed,

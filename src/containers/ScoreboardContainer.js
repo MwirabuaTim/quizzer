@@ -10,6 +10,9 @@ import ScoreboardPage from '../pages/ScoreboardPage';
 import * as actions from '../actions';
 
 class ScoreboardContainer extends React.Component {
+  static navigationOptions = {
+    title: 'ScoreBoard',
+  }
   constructor(props){
     super(props)
     this.state = {

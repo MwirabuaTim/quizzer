@@ -30,6 +30,6 @@ function* requestAllTriviaGames() {
 }
 
 export default function* watchRealmData() {
-  yield takeEvery(types.WRITE_TO_STORAGE, writeToRealm)
+  yield takeEvery(types.END_TRIVIA, writeToRealm)
   yield takeEvery(types.REQUEST_STORAGE_DATA, requestAllTriviaGames)
 }

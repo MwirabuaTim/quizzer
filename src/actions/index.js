@@ -34,9 +34,9 @@ export function restartTrivia(){
   }
 }
 
-export function writeToStore(score, difficulty, numberOfQuestions){
+export function endTrivia(score, difficulty, numberOfQuestions){
   return {
-    type: types.WRITE_TO_STORAGE,
+    type: types.END_TRIVIA,
     score,
     difficulty,
     numberOfQuestions

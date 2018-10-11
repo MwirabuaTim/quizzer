@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 
 const AppHeader = () => (
   <View style={styles.headerContainer}>
-    <Text style={styles.headerLabel}>Quizzer App</Text>
+    <Text style={styles.headerLabel}>Quizzer</Text>
   </View>
 )
 

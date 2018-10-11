@@ -55,18 +55,18 @@ describe('test restartTrivia action', () => {
   })
 });
 
-describe('test writeToStore action', () => {
+describe('test triviaEnded action', () => {
   it('should create action to write to realm store', () => {
     const score = 1;
     const difficulty = 'easy';
     const numberOfQuestions = 3;
     const expectedAction = {
-      type: types.WRITE_TO_STORAGE,
+      type: types.END_TRIVIA,
       score,
       difficulty,
       numberOfQuestions
     }
-    expect(actions.writeToStore(score, difficulty, numberOfQuestions)).toEqual(expectedAction)
+    expect(actions.triviaEnded(score, difficulty, numberOfQuestions)).toEqual(expectedAction)
   })
 });
 

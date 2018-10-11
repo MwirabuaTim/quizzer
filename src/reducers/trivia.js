@@ -1,12 +1,13 @@
 import * as types from '../actions/types';
 
 const initialState = {
-  numberOfQuestions: 1,
+  numberOfQuestions: 5,
   difficulty: 'easy',
   difficultyLevels: ['easy', 'medium', 'hard', 'mix'],
   loadingQuestions: false,
   triviaQuestions: [],
   triviaState: false, // when this state is active trivia view is used
+  triviaEnded: false,
   playerScore: 0
 }
 
@@ -23,6 +24,7 @@ export default function triviaReducer(state = initialState, action){
         triviaQuestions: action.data,
         loadingQuestions: false,
         triviaState: true,
+        triviaEnded: false,
       }
     case types.FETCH_FAILED:
       return {
@@ -49,6 +51,11 @@ export default function triviaReducer(state = initialState, action){
       return {
         ...state,
         difficulty: action.difficulty
+      }
+    case types.END_TRIVIA:
+      return {
+        ...state,
+        triviaEnded: true
       }
     default:
       return state;
